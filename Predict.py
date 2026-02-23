@@ -5,7 +5,7 @@ import pickle, time
 import os, datetime, re
 from math import pi
 from fractions import Fraction
-from NN_Structure_EMBED import Neural_Network_Arch
+from NN_Structure import Neural_Network_Arch
 
 class Prediction_Package:
     def __init__(self):
