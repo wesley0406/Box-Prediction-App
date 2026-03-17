@@ -12,9 +12,6 @@ from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, Add, Inp
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, Callback
 from tensorflow.keras.utils import plot_model
 
-# Import the pre_train data
-# from Pre_Train_data_Ver2_1 import FETCH_ERP_SCREW # Removed for GitHub
-
 class NaNInfMonitor(Callback):
     def on_batch_end(self, batch, logs=None):
         if logs is None:
@@ -130,7 +127,7 @@ class Neural_Network_Arch:
         numeric_features = ['Screw volume in the box', 'Diameter', 'Length']
         categorical_features = ["pdc_4", "pdc_5", 'Screw_Type', 'Head_Type']
 
-        # ---- 1. Handle missing values ----
+        
         if self.Train_data[numeric_features].isna().any().any() or np.isinf(self.Train_data[numeric_features]).any().any():
             print("Warning: NaN or Inf values detected in numeric features before preprocessing.")
         if self.Train_data[categorical_features].isna().any().any():
@@ -140,14 +137,14 @@ class Neural_Network_Arch:
         self.Train_data[categorical_features] = self.Train_data[categorical_features].fillna('Unknown')
 
 
-        # ---- 2. Numeric scaling ----
+        
         if self.scaler is None:
             self.scaler = RobustScaler()
             X_numeric = self.scaler.fit_transform(self.Train_data[numeric_features])
         else:
             X_numeric = self.scaler.transform(self.Train_data[numeric_features])
 
-        # ---- 3. Categorical integer encoding for embeddings ----
+        
         X_categorical = []
         if not hasattr(self, "label_encoders") or self.label_encoders is None:
             self.label_encoders = {}
@@ -162,7 +159,7 @@ class Neural_Network_Arch:
                 X_categorical.append(mapped_values.values)
 
 
-        # ---- 4. Target variable ----
+        
         y = self.Train_data['Packing_Ratio'].values if 'Packing_Ratio' in self.Train_data else None
         if self.config.get('scale_target', False) and y is not None:
             if self.target_scaler is None:
@@ -171,7 +168,7 @@ class Neural_Network_Arch:
             else:
                 y = self.target_scaler.transform(y.reshape(-1, 1)).flatten()
 
-        # ---- 5. Save scaler, target_scaler, and encoders ----
+        
         if save_files:
             os.makedirs(self.SAVE_FILE, exist_ok=True)
             with open(os.path.join(self.SAVE_FILE, f'scaler_{self.today}.pkl'), 'wb') as f:
@@ -182,7 +179,7 @@ class Neural_Network_Arch:
             with open(os.path.join(self.SAVE_FILE, f'label_encoders_{self.today}.pkl'), 'wb') as f:
                 pickle.dump(self.label_encoders, f)
 
-        # ---- 6. Check for NaN or Inf ----
+        
         if np.isnan(X_numeric).any() or np.isinf(X_numeric).any():
             print("Warning: NaN or Inf values detected in numeric features.")
         for x_cat in X_categorical:
@@ -190,18 +187,16 @@ class Neural_Network_Arch:
                 print("Warning: NaN or Inf values detected in categorical features.")
         if y is not None and (np.isnan(y).any() or np.isinf(y).any()):
             print("Warning: NaN or Inf values detected in target.")
-
         # ---- 7. Debug statistics ----
         if y is not None:
             print(self.Train_data[['Screw volume in the box', 'decision box/master volume']].describe())
             print("Expected Packing Ratio (Screw volume / Box volume):")
             print((self.Train_data['Screw volume in the box'] / self.Train_data['decision box/master volume']).describe())
 
-        # ---- 8. Return ----
-        # Return numeric features, list of categorical integer arrays, target, scaler, encoders, original screw volume
+    
         return [X_numeric] + X_categorical, y, self.scaler, self.label_encoders, self.Train_data['Screw volume in the box'].values
 
-    # _predict_container_volume method removed for GitHub (Training logic)
+
 
 if __name__ == "__main__":
     start = time.time()
