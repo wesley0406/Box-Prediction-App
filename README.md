@@ -47,9 +47,29 @@ If you prefer to set it up manually:
    ```bash
    streamlit run streamlit_app.py
    ```
+## How to use
+You can enter the screw spec for the head type and the screw type shortname please clikc the Reference to see what you are after.
+The system will tell you how big the box should be to contain all the screw.
+
+
+<img src="https://raw.githubusercontent.com/wesley0406/Box-Prediction-App/main/screenshot/mainpage.JPG" width="1060" height="350" />
+
+# Result 
+The Bar-Chart below will show you hoe close the screw fit in the box, normally we suggest 0~-10% will be suitable for thr daily use.
+Once the number fall below -10% it will be overpacked.
+<img src="https://raw.githubusercontent.com/wesley0406/Box-Prediction-App/main/screenshot/result.JPG" width="1060" height="450" />
+
+# Result with personal desgin box
+
+<img src="https://raw.githubusercontent.com/wesley0406/Box-Prediction-App/main/screenshot/customized_input.JPG" width="1060" height="450" />
+
+
+
 
 ## Model Information
-The application uses a deep learning model (trained on 2025-09-04) featuring:
-- Embedding layers for categorical features (Screw Type, Head Type).
-- Dense layers for numerical feature extraction.
-- Huber loss for robust regression against outliers.
+The application utilizes a deep learning regression model designed to predict box-related outputs based on both categorical and numerical features
+
+- Embedding layers for categorical features (Screw Type, Head Type)
+- Numerical inputs are processed through fully connected (dense) layers to capture nonlinear relationships
+- Uses Huber Loss, providing robustness against outliers while maintaining sensitivity for small errors
+- Applies Bayesian Optimization to automatically tune model parameters (e.g., learning rate, epoch), improving performance efficiently
